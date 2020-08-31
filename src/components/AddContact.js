@@ -37,11 +37,12 @@ const ADD_CONTACT = gql`
 const AddContact = (props) => {
   const [open, setOpen] = useState(false);
   const [disabled, setDisabled] = useState(true);
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [phone, setPhone] = useState('');
-  const [email, setEmail] = useState('');
-
+  const [newContact, setNewContact] = useState({
+    firstName: '',
+    lastName: '',
+    phone: '',
+    email: '',
+  });
   const { setMessage } = props;
 
   const [addContact] = useMutation(ADD_CONTACT, {
@@ -67,20 +68,15 @@ const AddContact = (props) => {
   };
 
   useEffect(() => {
-    if (firstName && lastName !== '') {
+    if (newContact.firstName && newContact.lastName !== '') {
       setDisabled(false);
     } else setDisabled(true);
-  }, [firstName, lastName]);
+  }, [newContact]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
     addContact({
-      variables: {
-        firstName: firstName,
-        lastName: lastName,
-        phone: phone,
-        email: email,
-      },
+      variables: newContact,
     });
     setMessage('User added successfully.');
     setTimeout(() => {
@@ -92,10 +88,16 @@ const AddContact = (props) => {
   };
 
   const resetForm = () => {
-    setFirstName('');
-    setLastName('');
-    setPhone('');
-    setEmail('');
+    setNewContact({
+      firstName: '',
+      lastName: '',
+      phone: '',
+      email: '',
+    });
+  };
+
+  const handleInputChange = (e) => {
+    setNewContact({ ...newContact, [e.target.name]: e.target.value });
   };
 
   return (
@@ -123,47 +125,51 @@ const AddContact = (props) => {
                 required
                 margin='normal'
                 id='firstName'
+                name='firstName'
                 label='First Name'
                 type='text'
                 fullWidth
                 variant='outlined'
                 color='primary'
-                value={firstName}
-                onChange={(e) => setFirstName(e.target.value)}
+                value={newContact.firstName}
+                onChange={handleInputChange}
               />
               <TextField
                 required
                 margin='normal'
                 id='lastName'
+                name='lastName'
                 label='Last Name'
                 type='text'
                 fullWidth
                 variant='outlined'
                 color='primary'
-                value={lastName}
-                onChange={(e) => setLastName(e.target.value)}
+                value={newContact.lastName}
+                onChange={handleInputChange}
               />
               <TextField
                 margin='normal'
                 id='phone'
+                name='phone'
                 label='Phone Number'
                 type='text'
                 fullWidth
                 variant='outlined'
                 color='primary'
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
+                value={newContact.phone}
+                onChange={handleInputChange}
               />
               <TextField
                 margin='normal'
                 id='email'
+                name='email'
                 label='Email Address'
                 type='email'
                 fullWidth
                 variant='outlined'
                 color='primary'
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                value={newContact.email}
+                onChange={handleInputChange}
               />
             </div>
           </DialogContent>
